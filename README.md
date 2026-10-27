@@ -84,21 +84,48 @@ O esquema valida os valores de âmbito e as siglas das unidades federativas.
 Normas estaduais precisam de uma UF; normas federais não devem ter estado
 associado.
 
+## Segurança e publicação
+
+O Next.js envia cabeçalhos HTTP para reduzir riscos comuns no navegador, como
+enquadramento da página por outros sites, detecção indevida de tipos de arquivo
+e envio excessivo de informações de referência. Isso é uma proteção básica,
+não substitui controles de infraestrutura.
+
+Esta versão ainda não tem API nem integração ativa com o banco, portanto não há
+rate limiting da aplicação a configurar agora. Quando endpoints forem criados,
+limites de requisição devem ser aplicados no servidor ou na camada de borda
+(CDN/WAF), nunca apenas no navegador.
+
+Antes de publicar:
+
+- Ative a proteção contra DDoS e regras de WAF oferecidas pela hospedagem ou CDN.
+- Configure limites de requisição na borda para rotas de API quando existirem e
+  monitore alertas de tráfego.
+- Proteja as contas da hospedagem, do registrador de domínio e do DNS com MFA;
+  use bloqueio de transferência do domínio e DNSSEC se o provedor oferecer.
+- Mantenha segredos em variáveis de ambiente locais/de produção. Não coloque
+  chaves privadas no código nem em variáveis `NEXT_PUBLIC_*`, que são expostas
+  ao navegador. Arquivos `.env*` são ignorados pelo Git.
+- Se integrar o Supabase, nunca exponha a chave `service_role` no frontend.
+
 ## Estrutura principal
 
 ```text
-app/
-  page.tsx                 Página inicial
-  sobre/page.tsx           Sobre nós
-  privacidade/page.tsx     Política de Privacidade
-  termos/page.tsx          Termos de Uso
-components/
-  BuscaComFiltro.tsx       Campo de busca e filtros
-  Header.tsx               Cabeçalho
-  Footer.tsx               Rodapé e links institucionais
-lib/
-  links.ts                 Links de navegação
-  types.ts                 Tipos dos atos e lista de UFs
+src/
+  app/
+    page.tsx               Página inicial
+    sobre/page.tsx         Sobre nós
+    privacidade/page.tsx   Política de Privacidade
+    termos/page.tsx        Termos de Uso
+  components/
+    BuscaComFiltro.tsx     Campo de busca e filtros
+    Header.tsx             Cabeçalho
+    Footer.tsx             Rodapé e links institucionais
+  lib/
+    links.ts               Links de navegação
+    types.ts               Tipos dos atos e lista de UFs
+public/
+  ...                      Arquivos estáticos
 supabase/
   schema.sql               Esquema inicial do banco
 ```
